@@ -4,7 +4,10 @@ import fs from "fs";
 export interface IGuildConfig {
     guildId: string;
     pinChannel: string;
-    roles: string[];
+    roles: {
+        pinners: string[];
+        admins: string[];
+    }
     joined: boolean;
 }
 
@@ -30,7 +33,10 @@ function returnConfig(guildId:string) : IGuildConfig{
     let returnObject:IGuildConfig = {
         guildId: guildId,
         pinChannel: "",
-        roles: [],
+        roles: {
+            pinners: [],
+            admins: [],
+        },
         joined: true,
     }
     return returnObject
@@ -55,7 +61,7 @@ export function haveGuildsLeft(config: IConfig, client: Client){
     let changed: boolean = false;
 
     config.guilds.forEach(guild => {
-        if(client.guilds.cache.filter(element=> element.id == guild.guildId).size === 0){
+        if(guild.joined && client.guilds.cache.filter(element=> element.id == guild.guildId).size === 0){
             guild.joined = false;
             changed = true;
             console.log(`${guild.guildId} has left since offline`)
@@ -79,7 +85,8 @@ export function setGuildConfig(guildConfig: IGuildConfig):void{
     config.guilds.map(item => {
         if (item.guildId === guildConfig.guildId){
             item.pinChannel = guildConfig.pinChannel;
-            item.roles = guildConfig.roles;
+            item.roles.pinners = guildConfig.roles.pinners;
+            item.roles.admins = guildConfig.roles.admins;
         }
     })
     saveConfig(config);

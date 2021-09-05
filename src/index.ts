@@ -28,8 +28,8 @@ client.on("interactionCreate", async interaction => {
 		if (commandName === 'ping') {
 			let text:string = interaction.options.getString("text");
 			await interaction.reply(`Pong! ${text}`);
-		} else if (commandName === "pin"){
-			pinSettings(interaction)
+		} else if (commandName === "pinsettings"){
+			pinSettings(interaction, client)
 		}
 
 	} else if(interaction.isContextMenu()){

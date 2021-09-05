@@ -1,14 +1,14 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Client } from "discord.js";
+import { Client} from "discord.js";
 
 
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 require('dotenv').config()
 import { IGuildConfig } from "./config";
-import { supplyPermissions } from "./deploy-permissions";
+import { deployPermissions } from "./deploy-permissions";
 
-export function supplyCommands(guild:IGuildConfig, client:Client){
+export function deployCommands(guildConfig:IGuildConfig, client: Client){
 	let commands = [];
 
 	// let registeredcommands = [
@@ -26,15 +26,14 @@ export function supplyCommands(guild:IGuildConfig, client:Client){
 	// ]
 	// 	.map(command => command.toJSON());
 
-	// console.log(registeredcommands);
-
 	commands.push({
+		"default_permission": false,
 		"name": "pin",
 		"type": 3
 	});
 
 	commands.push({
-		"default_permission": false,
+		"default_permission": true,
 		"name": "ping",
 		"description": "Pings the bot",
 		"options": [{
@@ -44,25 +43,35 @@ export function supplyCommands(guild:IGuildConfig, client:Client){
 			"required": true
 		}	
 		],
-		"permissions": [
-			{
-				id: "792069956334125086",
-				type: 1,
-				permission: true
-			}
-		]
 	})
 
 	commands.push(
 		{
-			"name": "pin",
-			"description": "Get or edit permissions for a user or a role",
+			"name": "pinsettings",
+			"default_permission": false,
+			"description": "Change the settings for pinbot",
 			"options": [
 				{
-					"name": "roles",
+					"name": "permissions",
 					"description": "Get or edit permissions for a user",
 					"type": 1,
 					"options": [
+						{
+							"name": "permission",
+							"description": "What permission to change",
+							"type": 3,
+							"required": true,
+							"choices": [
+								{
+									"name": "Pinner",
+									"value": "pin_role_Pinner"
+								},
+								{
+									"name": "Admin",
+									"value": "pin_role_Admin"
+								}
+							]
+						},
 						{
 							"name": "action",
 							"description": "The type of animal",
@@ -117,19 +126,21 @@ export function supplyCommands(guild:IGuildConfig, client:Client){
 	)
 
 	const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
-
 	(async () => {
 		try {
 			await rest.put(
-				Routes.applicationGuildCommands(process.env.CLIENTID, guild.guildId),
+				Routes.applicationGuildCommands(process.env.CLIENTID, guildConfig.guildId),
 				{ body: commands },
 			);
 
-			console.log(`Successfully registered application commands to ${guild.guildId}.`);
+			console.log(`Successfully registered application commands to ${guildConfig.guildId}.`);
+			
 		} catch (error) {
 			console.error(error);
 		}
-	})();
+	})().then(() => deployPermissions(guildConfig, client));
+
+	
 
 	
 }

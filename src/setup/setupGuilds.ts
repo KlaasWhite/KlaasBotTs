@@ -1,6 +1,6 @@
 import { Client, Guild } from "discord.js";
-import {supplyCommands} from "./deploy-commands"
-import { supplyPermissions } from "./deploy-permissions";
+import {deployCommands} from "./deploy-commands"
+import { deployPermissions } from "./deploy-permissions";
 import {openConfig, isGuildInConfig, IConfig, saveConfig, haveGuildsLeft, IGuildConfig} from "./config"
 
 export function startUp(client:Client){
@@ -15,7 +15,7 @@ export function startUp(client:Client){
 
     config.guilds.forEach(guild => {
         if (guild.joined){
-            supplyCommands(guild, client);
+            deployCommands(guild, client);
         } else {
             console.log(`Not supplied to ${guild.guildId}, not joined`);
         }
@@ -28,7 +28,7 @@ export function guildJoin(guild:Guild, client:Client){
     isGuildInConfig(guild.id, config);
     let foundGuilds:IGuildConfig[] = config.guilds.filter(element=> element.guildId == guild.id)
     foundGuilds.forEach(element => {
-        supplyCommands(element, client);
+        deployCommands(element, client);
     });
     
 }

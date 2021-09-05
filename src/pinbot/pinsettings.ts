@@ -1,24 +1,34 @@
-import { CommandInteraction } from "discord.js";
+import { Client, CommandInteraction } from "discord.js";
 import {getGuildConfig, IGuildConfig, setGuildConfig} from "../setup/config"
+import {deployPermissions} from "../setup/deploy-permissions"
 
 
-export async function pinSettings(interaction:CommandInteraction){
+export async function pinSettings(interaction:CommandInteraction, client: Client){
     let subcommand: string = interaction.options.getSubcommand();
 
     let config:IGuildConfig = getGuildConfig(interaction.guild.id);
     let changed:boolean = false;
 
     switch (subcommand){
-        case "roles":
+        case "permissions":
             let role:string = interaction.options.getRole("choice").id;
-            let inConfig:boolean = config.roles.includes(role);
+            let perm:string = interaction.options.getString("permission")
+            let inConfig:boolean
+            let list:string[]
+            if(perm === "pin_role_Pinner"){
+                inConfig = config.roles.pinners.includes(role);
+                list = config.roles.pinners;
+            } else if (perm === "pin_role_Admin"){
+                inConfig = config.roles.admins.includes(role);
+                list = config.roles.admins;
+            }
             switch (interaction.options.getString("action")){
                 case "pin_role_add":
                     if(inConfig){
                         interaction.reply("Role already in config")
                     } else {
-                        config.roles.push(role);
-                        interaction.reply(`<@&${role}> was added to the config`)
+                        list.push(role);
+                        interaction.reply(`<@&${role}> was added to the ${perm}`)
                         changed = true;
                     } 
                     break;
@@ -26,9 +36,9 @@ export async function pinSettings(interaction:CommandInteraction){
                     if (!inConfig){
                         interaction.reply("Role not in config")
                     } else {
-                        let index:number = config.roles.indexOf(role);
-                        config.roles.splice(index, 1);
-                        interaction.reply(`<@&${role}> was remove from the config`)
+                        let index:number = list.indexOf(role);
+                        list.splice(index, 1);
+                        interaction.reply(`<@&${role}> was remove from the ${perm}`)
                         changed = true;
                     }
                     break;
@@ -58,6 +68,7 @@ export async function pinSettings(interaction:CommandInteraction){
     }
 
     if (changed){
+        deployPermissions(config, client);
         setGuildConfig(config);
     }
 
