@@ -15,10 +15,10 @@ export async function pinSettings(interaction:CommandInteraction, client: Client
             let perm:string = interaction.options.getString("permission")
             let inConfig:boolean
             let list:string[]
-            if(perm === "pin_role_Pinner"){
+            if(perm === "pinner"){
                 inConfig = config.roles.pinners.includes(role);
                 list = config.roles.pinners;
-            } else if (perm === "pin_role_Admin"){
+            } else if (perm === "admin"){
                 inConfig = config.roles.admins.includes(role);
                 list = config.roles.admins;
             }
@@ -28,7 +28,7 @@ export async function pinSettings(interaction:CommandInteraction, client: Client
                         interaction.reply("Role already in config")
                     } else {
                         list.push(role);
-                        interaction.reply(`<@&${role}> was added to the ${perm}`)
+                        interaction.reply(`<@&${role}> was added to the permission group ${perm}`)
                         changed = true;
                     } 
                     break;
@@ -38,7 +38,7 @@ export async function pinSettings(interaction:CommandInteraction, client: Client
                     } else {
                         let index:number = list.indexOf(role);
                         list.splice(index, 1);
-                        interaction.reply(`<@&${role}> was remove from the ${perm}`)
+                        interaction.reply(`<@&${role}> was remove from the permission group ${perm}`)
                         changed = true;
                     }
                     break;

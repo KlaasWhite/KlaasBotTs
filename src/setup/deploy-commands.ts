@@ -64,11 +64,11 @@ export function deployCommands(guildConfig:IGuildConfig, client: Client){
 							"choices": [
 								{
 									"name": "Pinner",
-									"value": "pin_role_Pinner"
+									"value": "pinner"
 								},
 								{
 									"name": "Admin",
-									"value": "pin_role_Admin"
+									"value": "admin"
 								}
 							]
 						},
