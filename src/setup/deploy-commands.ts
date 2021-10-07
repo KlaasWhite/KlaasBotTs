@@ -125,6 +125,52 @@ export function deployCommands(guildConfig:IGuildConfig, client: Client){
 		}
 	)
 
+	commands.push({
+		"default_permission": true,
+		"name": "music",
+		"description": "Music module",
+		"options": [
+			{
+				"name": "play",
+				"description": "Play a track or add a track to the queue",
+				"type": 1,
+				"options" : [
+					{
+						"name": "song",
+						"description": "song to play",
+						"type": 3,
+						"required": true
+					}
+				]
+			},
+			{
+				"name": 'skip',
+				"description": 'Skip to the next song in the queue',
+				"type": 1
+			},
+			{
+				"name": 'queue',
+				"description": 'See the music queue',
+				"type": 1
+			},
+			{
+				"name": 'pause',
+				"description": 'Pauses the song that is currently playing',
+				"type": 1
+			},
+			{
+				"name": 'resume',
+				"description": 'Resume playback of the current song',
+				"type": 1
+			},
+			{
+				"name": 'leave',
+				"description": 'Leave the voice channel',
+				"type": 1
+			},
+		]
+	})
+
 	const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
 	(async () => {
 		try {
